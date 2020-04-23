@@ -15,7 +15,6 @@ import salt.utils.platform
 from salt.ext import six
 from salt.ext.six.moves import configparser
 from tests.support.case import ModuleCase
-from tests.support.helpers import destructiveTest
 from tests.support.unit import skipIf
 
 try:
@@ -159,7 +158,7 @@ class NilrtIpModuleTest(ModuleCase):
                     ).lower()
                 )
 
-    @destructiveTest
+    @pytest.mark.destructive_test
     def test_down(self):
         """
         Test ip.down function
@@ -175,7 +174,7 @@ class NilrtIpModuleTest(ModuleCase):
                 self.__connected(pyiface.Interface(name=interface["connectionid"]))
             )
 
-    @destructiveTest
+    @pytest.mark.destructive_test
     def test_up(self):
         """
         Test ip.up function
@@ -193,7 +192,7 @@ class NilrtIpModuleTest(ModuleCase):
         for interface in info["interfaces"]:
             self.assertEqual(interface["adapter_mode"], "tcpip")
 
-    @destructiveTest
+    @pytest.mark.destructive_test
     def test_set_dhcp_linklocal_all(self):
         """
         Test ip.set_dhcp_linklocal_all function
@@ -207,7 +206,7 @@ class NilrtIpModuleTest(ModuleCase):
             self.assertEqual(interface["ipv4"]["requestmode"], "dhcp_linklocal")
             self.assertEqual(interface["adapter_mode"], "tcpip")
 
-    @destructiveTest
+    @pytest.mark.destructive_test
     def test_set_dhcp_only_all(self):
         """
         Test ip.set_dhcp_only_all function
@@ -223,7 +222,7 @@ class NilrtIpModuleTest(ModuleCase):
             self.assertEqual(interface["ipv4"]["requestmode"], "dhcp_only")
             self.assertEqual(interface["adapter_mode"], "tcpip")
 
-    @destructiveTest
+    @pytest.mark.destructive_test
     def test_set_linklocal_only_all(self):
         """
         Test ip.set_linklocal_only_all function
@@ -239,7 +238,7 @@ class NilrtIpModuleTest(ModuleCase):
             self.assertEqual(interface["ipv4"]["requestmode"], "linklocal_only")
             self.assertEqual(interface["adapter_mode"], "tcpip")
 
-    @destructiveTest
+    @pytest.mark.destructive_test
     def test_static_all(self):
         """
         Test ip.set_static_all function
@@ -287,7 +286,7 @@ class NilrtIpModuleTest(ModuleCase):
                 elif self.__check_ethercat():
                     self.assertIn("ethercat", interface["supported_adapter_modes"])
 
-    @destructiveTest
+    @pytest.mark.destructive_test
     def test_ethercat(self):
         """
         Test ip.set_ethercat function
