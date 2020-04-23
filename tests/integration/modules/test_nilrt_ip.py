@@ -3,25 +3,19 @@
 integration tests for nilirt_ip
 """
 
-# Import Python libs
 from __future__ import absolute_import, print_function, unicode_literals
 
 import re
 import time
 
+import pytest
 import salt.modules.nilrt_ip as ip
 import salt.utils.files
-
-# Import Salt libs
 import salt.utils.platform
 from salt.ext import six
-
-# pylint: disable=import-error
 from salt.ext.six.moves import configparser
-
-# Import Salt Testing libs
 from tests.support.case import ModuleCase
-from tests.support.helpers import destructiveTest, skip_if_not_root
+from tests.support.helpers import destructiveTest
 from tests.support.unit import skipIf
 
 try:
@@ -37,7 +31,7 @@ except ImportError:
 
 
 # pylint: disable=too-many-ancestors
-@skip_if_not_root
+@pytest.mark.skip_if_not_root
 @skipIf(not pyiface, "The python pyiface package is not installed")
 @skipIf(not CaseInsensitiveDict, "The python package request is not installed")
 @skipIf(not salt.utils.platform.is_linux(), "These tests can only be run on linux")
