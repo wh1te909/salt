@@ -31,8 +31,6 @@ import nox  # isort:skip
 from nox.command import CommandFailed  # isort:skip
 
 
-IS_PY3 = sys.version_info > (2,)
-
 # Be verbose when runing under a CI context
 PIP_INSTALL_SILENT = (
     os.environ.get("JENKINS_URL") or os.environ.get("CI") or os.environ.get("DRONE")
@@ -45,7 +43,7 @@ SITECUSTOMIZE_DIR = os.path.join(REPO_ROOT, "tests", "support", "coverage")
 IS_DARWIN = sys.platform.lower().startswith("darwin")
 IS_WINDOWS = sys.platform.lower().startswith("win")
 # Python versions to run against
-_PYTHON_VERSIONS = ("2", "2.7", "3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9")
+_PYTHON_VERSIONS = ("3", "3.5", "3.6", "3.7", "3.8", "3.9")
 
 # Nox options
 #  Reuse existing virtualenvs
@@ -216,33 +214,33 @@ def _get_distro_pip_constraints(session, transport):
 
     if IS_WINDOWS:
         _distro_constraints = os.path.join(
-            "requirements", "static", pydir, "{}-windows.txt".format(transport)
+            "requirements", "static", "ci", pydir, "{}-windows.txt".format(transport)
         )
         if os.path.exists(_distro_constraints):
             distro_constraints.append(_distro_constraints)
         _distro_constraints = os.path.join(
-            "requirements", "static", pydir, "windows.txt"
+            "requirements", "static", "ci", pydir, "windows.txt"
         )
         if os.path.exists(_distro_constraints):
             distro_constraints.append(_distro_constraints)
         _distro_constraints = os.path.join(
-            "requirements", "static", pydir, "windows-crypto.txt"
+            "requirements", "static", "ci", pydir, "windows-crypto.txt"
         )
         if os.path.exists(_distro_constraints):
             distro_constraints.append(_distro_constraints)
     elif IS_DARWIN:
         _distro_constraints = os.path.join(
-            "requirements", "static", pydir, "{}-darwin.txt".format(transport)
+            "requirements", "static", "ci", pydir, "{}-darwin.txt".format(transport)
         )
         if os.path.exists(_distro_constraints):
             distro_constraints.append(_distro_constraints)
         _distro_constraints = os.path.join(
-            "requirements", "static", pydir, "darwin.txt"
+            "requirements", "static", "ci", pydir, "darwin.txt"
         )
         if os.path.exists(_distro_constraints):
             distro_constraints.append(_distro_constraints)
         _distro_constraints = os.path.join(
-            "requirements", "static", pydir, "darwin-crypto.txt"
+            "requirements", "static", "ci", pydir, "darwin-crypto.txt"
         )
         if os.path.exists(_distro_constraints):
             distro_constraints.append(_distro_constraints)
@@ -257,12 +255,16 @@ def _get_distro_pip_constraints(session, transport):
         ]
         for distro_key in distro_keys:
             _distro_constraints = os.path.join(
-                "requirements", "static", pydir, "{}.txt".format(distro_key)
+                "requirements", "static", "ci", pydir, "{}.txt".format(distro_key)
             )
             if os.path.exists(_distro_constraints):
                 distro_constraints.append(_distro_constraints)
             _distro_constraints = os.path.join(
-                "requirements", "static", pydir, "{}-crypto.txt".format(distro_key)
+                "requirements",
+                "static",
+                "ci",
+                pydir,
+                "{}-crypto.txt".format(distro_key),
             )
             if os.path.exists(_distro_constraints):
                 distro_constraints.append(_distro_constraints)
@@ -296,18 +298,18 @@ def _install_requirements(session, transport, *extra_requirements):
         os.path.join("requirements", "pytest.txt"),
     ]
     if sys.platform.startswith("linux"):
-        requirements_files = [os.path.join("requirements", "static", "linux.in")]
+        requirements_files = [os.path.join("requirements", "static", "ci", "linux.in")]
     elif sys.platform.startswith("win"):
         requirements_files = [
             os.path.join("pkg", "windows", "req.txt"),
-            os.path.join("requirements", "static", "windows.in"),
+            os.path.join("requirements", "static", "ci", "windows.in"),
         ]
     elif sys.platform.startswith("darwin"):
         requirements_files = [
             os.path.join("pkg", "osx", "req.txt"),
             os.path.join("pkg", "osx", "req_ext.txt"),
             os.path.join("pkg", "osx", "req_pyobjc.txt"),
-            os.path.join("requirements", "static", "darwin.in"),
+            os.path.join("requirements", "static", "ci", "darwin.in"),
         ]
 
     while True:
@@ -644,12 +646,15 @@ def runtests_cloud(session, coverage):
     # Install requirements
     _install_requirements(session, "zeromq", "unittest-xml-reporting==2.2.1")
 
-    pydir = _get_pydir(session)
-    cloud_requirements = os.path.join("requirements", "static", pydir, "cloud.txt")
+    requirements_file = os.path.join("requirements", "static", "ci", "cloud.in")
+    distro_constraints = [
+        os.path.join("requirements", "static", "ci", _get_pydir(session), "cloud.txt")
+    ]
 
-    session.install(
-        "--progress-bar=off", "-r", cloud_requirements, silent=PIP_INSTALL_SILENT
-    )
+    install_command = ["--progress-bar=off", "-r", requirements_file]
+    for distro_constraint in distro_constraints:
+        install_command.extend(["--constraint", distro_constraint])
+    session.install(*install_command, silent=PIP_INSTALL_SILENT)
 
     cmd_args = [
         "--tests-logfile={}".format(RUNTESTS_LOGFILE),
@@ -833,12 +838,15 @@ def pytest_zeromq_pycryptodome(session, coverage):
 def pytest_cloud(session, coverage):
     # Install requirements
     _install_requirements(session, "zeromq")
-    pydir = _get_pydir(session)
-    cloud_requirements = os.path.join("requirements", "static", pydir, "cloud.txt")
+    requirements_file = os.path.join("requirements", "static", "ci", "cloud.in")
+    distro_constraints = [
+        os.path.join("requirements", "static", "ci", _get_pydir(session), "cloud.txt")
+    ]
 
-    session.install(
-        "--progress-bar=off", "-r", cloud_requirements, silent=PIP_INSTALL_SILENT
-    )
+    install_command = ["--progress-bar=off", "-r", requirements_file]
+    for distro_constraint in distro_constraints:
+        install_command.extend(["--constraint", distro_constraint])
+    session.install(*install_command, silent=PIP_INSTALL_SILENT)
 
     cmd_args = [
         "--rootdir",
@@ -932,8 +940,10 @@ class Tee:
 
 def _lint(session, rcfile, flags, paths, tee_output=True):
     _install_requirements(session, "zeromq")
-    requirements_file = "requirements/static/lint.in"
-    distro_constraints = ["requirements/static/{}/lint.txt".format(_get_pydir(session))]
+    requirements_file = os.path.join("requirements", "static", "ci", "lint.in")
+    distro_constraints = [
+        os.path.join("requirements", "static", "ci", _get_pydir(session), "lint.txt")
+    ]
     install_command = ["--progress-bar=off", "-r", requirements_file]
     for distro_constraint in distro_constraints:
         install_command.extend(["--constraint", distro_constraint])
@@ -962,10 +972,7 @@ def _lint(session, rcfile, flags, paths, tee_output=True):
             stdout.seek(0)
             contents = stdout.read()
             if contents:
-                if IS_PY3:
-                    contents = contents.decode("utf-8")
-                else:
-                    contents = contents.encode("utf-8")
+                contents = contents.decode("utf-8")
                 sys.stdout.write(contents)
                 sys.stdout.flush()
                 if pylint_report_path:
@@ -1088,10 +1095,10 @@ def docs_html(session, compress):
     Build Salt's HTML Documentation
     """
     pydir = _get_pydir(session)
-    if pydir == "py3.4":
-        session.error("Sphinx only runs on Python >= 3.5")
-    requirements_file = "requirements/static/docs.in"
-    distro_constraints = ["requirements/static/{}/docs.txt".format(_get_pydir(session))]
+    requirements_file = os.path.join("requirements", "static", "ci", "docs.in")
+    distro_constraints = [
+        os.path.join("requirements", "static", "ci", _get_pydir(session), "docs.txt")
+    ]
     install_command = ["--progress-bar=off", "-r", requirements_file]
     for distro_constraint in distro_constraints:
         install_command.extend(["--constraint", distro_constraint])
@@ -1112,10 +1119,10 @@ def docs_man(session, compress, update):
     Build Salt's Manpages Documentation
     """
     pydir = _get_pydir(session)
-    if pydir == "py3.4":
-        session.error("Sphinx only runs on Python >= 3.5")
-    requirements_file = "requirements/static/docs.in"
-    distro_constraints = ["requirements/static/{}/docs.txt".format(_get_pydir(session))]
+    requirements_file = os.path.join("requirements", "static", "ci", "docs.in")
+    distro_constraints = [
+        os.path.join("requirements", "static", "ci", _get_pydir(session), "docs.txt")
+    ]
     install_command = ["--progress-bar=off", "-r", requirements_file]
     for distro_constraint in distro_constraints:
         install_command.extend(["--constraint", distro_constraint])
@@ -1135,9 +1142,9 @@ def _invoke(session):
     """
     Run invoke tasks
     """
-    requirements_file = "requirements/static/invoke.in"
+    requirements_file = os.path.join("requirements", "static", "ci", "invoke.in")
     distro_constraints = [
-        "requirements/static/{}/invoke.txt".format(_get_pydir(session))
+        os.path.join("requirements", "static", "ci", _get_pydir(session), "invoke.txt")
     ]
     install_command = ["--progress-bar=off", "-r", requirements_file]
     for distro_constraint in distro_constraints:
