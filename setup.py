@@ -96,8 +96,6 @@ else:
     )
 
 # Store a reference whether if we're running under Python 3 and above
-IS_PY3 = sys.version_info > (3,)
-
 try:
     # Add the esky bdist target if the module is available
     # may require additional modules depending on platform
@@ -214,11 +212,8 @@ def _check_ver(pyver, op, wanted):
     """
     pyver = distutils.version.LooseVersion(pyver)
     wanted = distutils.version.LooseVersion(wanted)
-    if IS_PY3:
-        if not isinstance(pyver, str):
-            pyver = str(pyver)
-        if not isinstance(wanted, str):
-            wanted = str(wanted)
+    if not isinstance(pyver, str):
+        pyver = str(pyver)
     return getattr(operator, "__{}__".format(op))(pyver, wanted)
 
 
@@ -232,10 +227,6 @@ def _parse_requirements_file(requirements_file):
             if IS_WINDOWS_PLATFORM:
                 if "libcloud" in line:
                     continue
-            if IS_PY3 and "futures" in line.lower():
-                # Python 3 already has futures, installing it will only break
-                # the current python installation whenever futures is imported
-                continue
             try:
                 pkg, pyverspec = line.rsplit(";", 1)
             except ValueError:
@@ -508,20 +499,12 @@ class DownloadWindowsDlls(Command):
 
                         if req.getcode() == 200:
                             with open(fdest, "wb") as wfh:
-                                if IS_PY3:
-                                    while True:
-                                        chunk = req.read(4096)
-                                        if len(chunk) == 0:
-                                            break
-                                        wfh.write(chunk)
-                                        wfh.flush()
-                                else:
-                                    while True:
-                                        for chunk in req.read(4096):
-                                            if not chunk:
-                                                break
-                                            wfh.write(chunk)
-                                            wfh.flush()
+                                while True:
+                                    chunk = req.read(4096)
+                                    if len(chunk) == 0:
+                                        break
+                                    wfh.write(chunk)
+                                    wfh.flush()
                         else:
                             log.error(
                                 "Failed to download {0}.dll to {1} from {2}".format(
@@ -537,10 +520,6 @@ class Sdist(sdist):
             self.run_command("write_salt_ssh_packaging_file")
             self.filelist.files.append(os.path.basename(PACKAGED_FOR_SALT_SSH_FILE))
 
-        if not IS_PY3 and not isinstance(base_dir, str):
-            # Work around some bad code in distutils which logs unicode paths
-            # against a str format string.
-            base_dir = base_dir.encode("utf-8")
         sdist.make_release_tree(self, base_dir, files)
 
         # Let's generate salt/_version.py to include in the sdist tarball
@@ -980,10 +959,7 @@ class SaltDistribution(distutils.dist.Distribution):
         self.name = "salt-ssh" if PACKAGED_FOR_SALT_SSH else "salt"
         self.salt_version = __version__  # pylint: disable=undefined-variable
         self.description = "Portable, distributed, remote execution and configuration management system"
-        kwargs = {}
-        if IS_PY3:
-            kwargs["encoding"] = "utf-8"
-        with open(SALT_LONG_DESCRIPTION_FILE, **kwargs) as f:
+        with open(SALT_LONG_DESCRIPTION_FILE) as f:
             self.long_description = f.read()
         self.long_description_content_type = "text/x-rst"
         self.author = "Thomas S Hatch"
