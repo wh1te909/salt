@@ -1,19 +1,2 @@
-# Darwin source distribution requirements
-apache-libcloud
-backports.ssl_match_hostname==3.7.0.1; python_version < '3.7'
-CherryPy
-cryptography
-gitpython
-idna
-ipaddress
-linode-python
-Mako
-psutil
-pyasn1
-pycparser
-pyopenssl
-python-dateutil
-python-gnupg
-setproctitle
-timelib
-vultr
+# This file only exists to trigger the right static compiled requirements destination
+# Don't add any requirements here.
