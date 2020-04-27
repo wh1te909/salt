@@ -33,7 +33,6 @@ class SchedulerPostponeTest(SchedulerTestsBase):
     def tearDown(self):
         self.schedule.reset()
 
-    @skipIf(True, "SLOWTEST skip")
     def test_postpone(self):
         """
         verify that scheduled job is postponed until the specified time.
