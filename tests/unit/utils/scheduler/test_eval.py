@@ -11,7 +11,6 @@ import pytest
 import salt.utils.platform
 import salt.utils.schedule
 from tests.support.mock import MagicMock, patch
-from tests.support.unit import skipIf
 from tests.unit.utils.scheduler.base import SchedulerTestsBase
 
 try:
@@ -32,8 +31,9 @@ except ImportError:
 log = logging.getLogger(__name__)
 
 
-@skipIf(
-    HAS_DATEUTIL_PARSER is False, "The 'dateutil.parser' library is not available",
+@pytest.mark.skipif(
+    HAS_DATEUTIL_PARSER is False,
+    reason="The 'dateutil.parser' library is not available",
 )
 @pytest.mark.windows_whitelisted
 class SchedulerEvalTest(SchedulerTestsBase):
@@ -41,9 +41,6 @@ class SchedulerEvalTest(SchedulerTestsBase):
         super(SchedulerEvalTest, self).setUp()
         self.schedule.opts["loop_interval"] = 1
         self.schedule.opts["grains"]["whens"] = {"tea time": "11/29/2017 12:00pm"}
-
-    def tearDown(self):
-        self.schedule.reset()
 
     def test_eval(self):
         """
@@ -238,7 +235,7 @@ class SchedulerEvalTest(SchedulerTestsBase):
         ret = self.schedule.job_status(job_name)
         self.assertEqual(ret["_last_run"], run_time)
 
-    @skipIf(not HAS_CRONITER, "Cannot find croniter python module")
+    @pytest.mark.skipif(not HAS_CRONITER, reason="Cannot find croniter python module")
     def test_eval_cron(self):
         """
         verify that scheduled job runs
@@ -258,7 +255,7 @@ class SchedulerEvalTest(SchedulerTestsBase):
         ret = self.schedule.job_status(job_name)
         self.assertEqual(ret["_last_run"], run_time)
 
-    @skipIf(not HAS_CRONITER, "Cannot find croniter python module")
+    @pytest.mark.skipif(not HAS_CRONITER, reason="Cannot find croniter python module")
     def test_eval_cron_loop_interval(self):
         """
         verify that scheduled job runs
