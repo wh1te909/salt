@@ -28,7 +28,6 @@ Function Get-Settings {
         # Prerequisite software
         $Prerequisites = @{
             "NSIS"           = "nsis-3.03-setup.exe"
-            "VCforPython"    = "VCForPython27.msi"
             "VCppBuildTools" = "visualcppbuildtools_full.exe"
         }
         $ini.Add("Prerequisites", $Prerequisites)
