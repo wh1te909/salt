@@ -103,9 +103,9 @@ goto eof
     echo %0 :: Uninstalling Python 3.7 ...
     echo ---------------------------------------------------------------------
     :: 64 bit
-    if exist "%LOCALAPPDATA%\Package Cache\{8ae589dd-de2e-42cd-af56-102374115fee}" (
+    if exist "%LOCALAPPDATA%\Package Cache\{6b043b92-4219-49e9-98cb-80558c6db697}" (
         echo %0 :: - 3.7.4 64bit
-        "%LOCALAPPDATA%\Package Cache\{8ae589dd-de2e-42cd-af56-102374115fee}\python-3.7.4-amd64.exe" /uninstall /quiet
+        "%LOCALAPPDATA%\Package Cache\{6b043b92-4219-49e9-98cb-80558c6db697}\python-3.7.7-amd64.exe" /uninstall /quiet
     )
 
     :: 32 bit

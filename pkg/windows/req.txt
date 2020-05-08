@@ -5,7 +5,6 @@ cffi==1.14.0
 CherryPy==18.6.0
 cryptography==2.9.2
 distro==1.5.0
-enum34==1.1.6; python_version < '3.4'
 idna==2.9
 ioloop==0.1a0
 ipaddress==1.0.23
@@ -35,8 +34,8 @@ timelib==0.2.4
 watchdog==0.10.2
 peewee==3.13.3
 pywin32-ctypes==0.2.0
-validators==0.14.3
-PySimpleGUI==4.18.2
+validators==0.15.0
+PySimpleGUI==4.19.0
 
 # GitPython
 GitPython==2.1.10
