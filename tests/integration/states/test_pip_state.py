@@ -402,10 +402,20 @@ class PipStateTest(ModuleCase, SaltReturnAssertsMixin):
                 elif salt.utils.platform.is_windows():
                     self.assertEqual(salt.utils.win_dacl.get_owner(path), username)
 
+    @destructiveTest
     @slowTest
     def test_issue_6833_pip_upgrade_pip(self):
         # Create the testing virtualenv
-        venv_dir = os.path.join(RUNTIME_VARS.TMP, "6833-pip-upgrade-pip")
+        if sys.platform == "win32":
+            # To keeps the path short, we'll create this directory on the root
+            # of the system drive. Otherwise the path is too long and the pip
+            # upgrade will fail. Also, I don't know why salt.utils.platform
+            # doesn't work in this function, that's why I used sys.platform
+            venv_dir = os.path.join(
+                os.environ["SystemDrive"], "tmp-6833-pip-upgrade-pip"
+            )
+        else:
+            venv_dir = os.path.join(RUNTIME_VARS.TMP, "6833-pip-upgrade-pip")
         ret = self._create_virtualenv(venv_dir)
 
         self.assertEqual(
@@ -415,23 +425,21 @@ class PipStateTest(ModuleCase, SaltReturnAssertsMixin):
                 pprint.pformat(ret)
             ),
         )
-        import salt.modules.virtualenv_mod
 
-        msg = "New python executable"
-        if salt.modules.virtualenv_mod.virtualenv_ver(venv_dir) >= (20, 0, 2):
-            msg = "created virtual environment"
-        self.assertIn(
-            msg,
-            ret["stdout"],
-            msg="Expected STDOUT did not match. Full return dictionary:\n{}".format(
+        if not (
+            "New python executable" in ret["stdout"]
+            or "created virtual environment" in ret["stdout"]
+        ):
+            assert (
+                False
+            ), "Expected STDOUT did not match. Full return dictionary:\n{}".format(
                 pprint.pformat(ret)
-            ),
-        )
+            )
 
         # Let's install a fixed version pip over whatever pip was
         # previously installed
         ret = self.run_function(
-            "pip.install", ["pip==8.0"], upgrade=True, bin_env=venv_dir
+            "pip.install", ["pip==9.0.1"], upgrade=True, bin_env=venv_dir
         )
 
         if not isinstance(ret, dict):
@@ -444,14 +452,14 @@ class PipStateTest(ModuleCase, SaltReturnAssertsMixin):
         self.assertEqual(ret["retcode"], 0)
         self.assertIn("Successfully installed pip", ret["stdout"])
 
-        # Let's make sure we have pip 8.0 installed
+        # Let's make sure we have pip 9.0.1 installed
         self.assertEqual(
-            self.run_function("pip.list", ["pip"], bin_env=venv_dir), {"pip": "8.0.0"}
+            self.run_function("pip.list", ["pip"], bin_env=venv_dir), {"pip": "9.0.1"}
         )
 
         # Now the actual pip upgrade pip test
         ret = self.run_state(
-            "pip.installed", name="pip==8.0.1", upgrade=True, bin_env=venv_dir
+            "pip.installed", name="pip==20.0.1", upgrade=True, bin_env=venv_dir
         )
 
         if not isinstance(ret, dict):
@@ -462,7 +470,7 @@ class PipStateTest(ModuleCase, SaltReturnAssertsMixin):
             )
 
         self.assertSaltTrueReturn(ret)
-        self.assertSaltStateChangesEqual(ret, {"pip==8.0.1": "Installed"})
+        self.assertSaltStateChangesEqual(ret, {"pip==20.0.1": "Installed"})
 
     @slowTest
     def test_pip_installed_specific_env(self):

@@ -19,7 +19,7 @@ pyasn1==0.4.8
 pycparser==2.20
 pycryptodomex==3.9.7
 pycurl==7.43.0.5
-pymssql==2.1.4
+pymssql==2.1.4 ; python_version < "3.8"
 PyMySQL==0.9.3
 pyopenssl==19.1.0
 python-dateutil==2.8.1

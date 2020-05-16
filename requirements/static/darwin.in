@@ -1,5 +1,5 @@
 # This is a compilation of requirements installed on salt-jenkins git.salt state run
-boto3
+boto3>=1.13.5
 boto>=2.46.0
 clustershell
 croniter>=0.3.0,!=0.3.22
@@ -26,7 +26,7 @@ salttesting==2017.6.1
 strict_rfc3339
 supervisor==3.3.5; python_version < '3'
 toml
-virtualenv==20.0.10
+virtualenv>=20.0.20
 watchdog
 yamlordereddictloader
 vcert~=0.7.0
