@@ -62,8 +62,9 @@ class InstallTest(TestCase):
                 if re.search(r"^\d.\d*", x)
             ][0]
             whl_ver_cmp = whl_ver.replace("_", "-")
-            assert whl_ver_cmp == salt.version.__version__, "{} != {}".format(
-                whl_ver_cmp, salt.version.__version__
+            salt_ver_cmp = salt.version.__version__.replace("/", "-")
+            assert whl_ver_cmp == salt_ver_cmp, "{} != {}".format(
+                whl_ver_cmp, salt_ver_cmp
             )
 
             # Because bdist_wheel supports pep517, we don't have to pre-install Salt's
@@ -81,16 +82,22 @@ class InstallTest(TestCase):
                 self.fail("Salt was not found installed")
 
             # Let's compare the installed version with the version salt reports
-            assert installed_version == salt.version.__version__
+            assert installed_version == salt_ver_cmp, "{} != {}".format(
+                installed_version, salt_ver_cmp
+            )
 
             # Let's also ensure we have a salt/_version.py from the installed salt wheel
-            installed_salt_path = (
-                pathlib.Path(venv.venv_dir)
-                / "lib"
-                / "python{}.{}".format(*sys.version_info)
-                / "site-packages"
-                / "salt"
-            )
+            subdir = [
+                "lib",
+                "python{}.{}".format(*sys.version_info),
+                "site-packages",
+                "salt",
+            ]
+            if salt.utils.platform.is_windows():
+                subdir.pop(1)
+
+            installed_salt_path = pathlib.Path(venv.venv_dir)
+            installed_salt_path = installed_salt_path.joinpath(*subdir)
             assert installed_salt_path.is_dir()
             salt_generated_version_file_path = installed_salt_path / "_version.py"
             assert salt_generated_version_file_path.is_file()
@@ -146,8 +153,9 @@ class InstallTest(TestCase):
                 if re.search(r"^\d.\d*", x)
             ][0]
             egg_ver_cmp = egg_ver.replace("_", "-")
-            assert egg_ver_cmp == salt.version.__version__, "{} != {}".format(
-                egg_ver_cmp, salt.version.__version__
+            salt_ver_cmp = salt.version.__version__.replace("/", "-")
+            assert egg_ver_cmp == salt_ver_cmp, "{} != {}".format(
+                egg_ver_cmp, salt_ver_cmp
             )
 
             # We cannot pip install an egg file, let's go old school
@@ -166,15 +174,20 @@ class InstallTest(TestCase):
                 self.fail("Salt was not found installed")
 
             # Let's compare the installed version with the version salt reports
-            assert installed_version == salt.version.__version__
+            assert installed_version == salt_ver_cmp, "{} != {}".format(
+                installed_version, salt_ver_cmp
+            )
 
             # Let's also ensure we have a salt/_version.py from the installed salt egg
-            site_packages_dir = (
-                pathlib.Path(venv.venv_dir)
-                / "lib"
-                / "python{}.{}".format(*sys.version_info)
-                / "site-packages"
-            )
+            subdir = [
+                "lib",
+                "python{}.{}".format(*sys.version_info),
+                "site-packages",
+            ]
+            if salt.utils.platform.is_windows():
+                subdir.pop(1)
+            site_packages_dir = pathlib.Path(venv.venv_dir)
+            site_packages_dir = site_packages_dir.joinpath(*subdir)
             assert site_packages_dir.is_dir()
             installed_salt_path = list(site_packages_dir.glob("salt*.egg"))
             if not installed_salt_path:
@@ -187,6 +200,14 @@ class InstallTest(TestCase):
                 salt_generated_version_file_path.is_file()
             ), "{} is not a file".format(salt_generated_version_file_path)
 
+    # On python 3.5 Windows sdist fails with encoding errors. This is resolved
+    # in later versions.
+    @skipIf(
+        salt.utils.platform.is_windows()
+        and sys.version_info > (3,)
+        and sys.version_info < (3, 6),
+        "Skip on python 3.5",
+    )
     @slowTest
     @with_tempdir()
     def test_sdist(self, tempdir):
@@ -235,20 +256,25 @@ class InstallTest(TestCase):
             sdist_ver_cmp = salt_generated_package.name.split(".tar.gz")[0].split(
                 "salt-"
             )[-1]
-            assert sdist_ver_cmp == salt.version.__version__, "{} != {}".format(
+            salt_ver_cmp = salt.version.__version__.replace("/", "-")
+            assert sdist_ver_cmp == salt_ver_cmp, "{} != {}".format(
                 sdist_ver_cmp, salt.version.__version__
             )
 
             venv.install(str(salt_generated_package))
 
             # Let's also ensure we have a salt/_version.py from the installed salt wheel
-            installed_salt_path = (
-                pathlib.Path(venv.venv_dir)
-                / "lib"
-                / "python{}.{}".format(*sys.version_info)
-                / "site-packages"
-                / "salt"
-            )
+            subdir = [
+                "lib",
+                "python{}.{}".format(*sys.version_info),
+                "site-packages",
+                "salt",
+            ]
+            if salt.utils.platform.is_windows():
+                subdir.pop(1)
+
+            installed_salt_path = pathlib.Path(venv.venv_dir)
+            installed_salt_path = installed_salt_path.joinpath(*subdir)
             assert installed_salt_path.is_dir()
             salt_generated_version_file_path = installed_salt_path / "_version.py"
             assert salt_generated_version_file_path.is_file()
@@ -266,8 +292,8 @@ class InstallTest(TestCase):
                 self.fail("Salt was not found installed")
 
             # Let's compare the installed version with the version salt reports
-            assert installed_version == salt.version.__version__, "{} != {}".format(
-                installed_version, salt.version.__version__
+            assert installed_version == salt_ver_cmp, "{} != {}".format(
+                installed_version, salt_ver_cmp
             )
 
     @slowTest
@@ -319,16 +345,22 @@ class InstallTest(TestCase):
             else:
                 self.fail("Salt was not found installed")
 
+            salt_ver_cmp = salt.version.__version__.replace("/", "-")
             # Let's compare the installed version with the version salt reports
-            assert installed_version == salt.version.__version__
+            assert installed_version == salt_ver_cmp, "{} != {}".format(
+                installed_version, salt_ver_cmp
+            )
 
             # Let's also ensure we have a salt/_version.py from the installed salt
-            site_packages_dir = (
-                pathlib.Path(venv.venv_dir)
-                / "lib"
-                / "python{}.{}".format(*sys.version_info)
-                / "site-packages"
-            )
+            subdir = [
+                "lib",
+                "python{}.{}".format(*sys.version_info),
+                "site-packages",
+            ]
+            if salt.utils.platform.is_windows():
+                subdir.pop(1)
+            site_packages_dir = pathlib.Path(venv.venv_dir)
+            site_packages_dir = site_packages_dir.joinpath(*subdir)
             assert site_packages_dir.is_dir()
             installed_salt_path = list(site_packages_dir.glob("salt*.egg"))
             if not installed_salt_path:
