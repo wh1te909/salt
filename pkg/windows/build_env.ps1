@@ -169,17 +169,19 @@ If (Test-Path "$($ini[$bitPaths]['VCppBuildToolsDir'])\vcbuildtools.bat") {
 #------------------------------------------------------------------------------
 Write-Output " - Checking for Python 3 installation . . ."
 If (Test-Path "$($ini['Settings']['Python3Dir'])\python.exe") {
-    # Found Python 3.5, do nothing
+    # Found Python 3.7, do nothing
     Write-Output " - Python 3 Found . . ."
 } Else {
-    Write-Output " - Downloading $($ini[$bitPrograms]['Python3']) . . ."
-    $file = "$($ini[$bitPrograms]['Python3'])"
-    $url  = "$($ini['Settings']['SaltRepo'])/$bitFolder/$file"
-    $file = "$($ini['Settings']['DownloadDir'])\$bitFolder\$file"
-    DownloadFileWithProgress $url $file
+    #Write-Output " - Downloading $($ini[$bitPrograms]['Python3']) . . ."
+    #$file = "$($ini[$bitPrograms]['Python3'])"
+    #$url  = "$($ini['Settings']['SaltRepo'])/$bitFolder/$file"
+    #$file = "$($ini['Settings']['DownloadDir'])\$bitFolder\$file"
+    #DownloadFileWithProgress $url $file
+    Write-Output "Installing Python 3.7.7"
+    $file = "C:\cds\python-3.7.7-amd64.exe"
 
     Write-Output " - $script_name :: Installing $($ini[$bitPrograms]['Python3']) . . ."
-    $p    = Start-Process $file -ArgumentList "/Quiet InstallAllUsers=1 TargetDir=`"$($ini['Settings']['Python3Dir'])`" Include_doc=0 Include_tcltk=0 Include_test=0 Include_launcher=1 PrependPath=1 Shortcuts=0" -Wait -NoNewWindow -PassThru
+    $p    = Start-Process $file -ArgumentList "/Quiet InstallAllUsers=1 TargetDir=`"$($ini['Settings']['Python3Dir'])`" Include_doc=0 Include_tcltk=1 Include_test=0 Include_launcher=1 PrependPath=1 Shortcuts=0" -Wait -NoNewWindow -PassThru
 }
 
 #------------------------------------------------------------------------------

@@ -230,19 +230,10 @@ del /S /Q "%BinDir%\..\empty.*" 1>nul
 :: Delete Unused Docs and Modules
 If Exist "%BinDir%\Doc"           rd /S /Q "%BinDir%\Doc"
 If Exist "%BinDir%\share"         rd /S /Q "%BinDir%\share"
-If Exist "%BinDir%\tcl"           rd /S /Q "%BinDir%\tcl"
 If Exist "%BinDir%\Lib\idlelib"   rd /S /Q "%BinDir%\Lib\idlelib"
-If Exist "%BinDir%\Lib\lib-tk"    rd /S /Q "%BinDir%\Lib\lib-tk"
 If Exist "%BinDir%\Lib\test"      rd /S /Q "%BinDir%\Lib\test"
 If Exist "%BinDir%\Lib\unit-test" rd /S /Q "%BinDir%\Lib\unit-test"
 
-:: Delete Unused .dll files
-If Exist "%BinDir%\DLLs\tcl85.dll"    del /Q "%BinDir%\DLLs\tcl85.dll"    1>nul
-If Exist "%BinDir%\DLLs\tclpip85.dll" del /Q "%BinDir%\DLLs\tclpip85.dll" 1>nul
-If Exist "%BinDir%\DLLs\tk85.dll"     del /Q "%BinDir%\DLLs\tk85.dll"     1>nul
-
-:: Delete Unused .lib files
-If Exist "%BinDir%\libs\_tkinter.lib" del /Q "%BinDir%\libs\_tkinter.lib" 1>nul
 
 :: Delete .txt files
 If Exist "%BinDir%\NEWS.txt"   del /Q "%BinDir%\NEWS.txt"   1>nul
