@@ -120,3 +120,4 @@ requirements/static/py*/*.log
 pkg/windows/installer/*.exe
 pkg/windows/prereqs
 pkg/windows/buildenv/bin
+pkg/windows/buildenv/conf/minion

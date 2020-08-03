@@ -1,26 +1,26 @@
 -r req_win.txt
 backports.ssl-match-hostname==3.7.0.1; python_version < '3.7'
 certifi
-cffi==1.14.0
+cffi==1.14.1
 CherryPy==18.6.0
 cryptography==2.9.2
 distro==1.5.0
-idna==2.9
+idna==2.10
 ioloop==0.1a0
 ipaddress==1.0.23
 jinja2==2.11.2
 libnacl==1.7.1
-lxml==4.5.1
+lxml==4.5.2
 Mako==1.1.3
 markupsafe==1.1.1
-msgpack-python==0.5.6
-psutil==5.7.0
+msgpack==1.0.0
+psutil==5.7.2
 pyasn1==0.4.8
 pycparser==2.20
-pycryptodomex==3.9.7
+pycryptodomex==3.9.8
 pycurl==7.43.0.5
 pymssql==2.1.4 ; python_version < "3.8"
-PyMySQL==0.9.3
+PyMySQL==0.10.0
 pyopenssl==19.1.0
 python-dateutil==2.8.1
 python-gnupg==0.4.6
@@ -30,11 +30,21 @@ pyzmq==19.0.0 ; python_version >= "3.8"
 requests==2.24.0
 setproctitle
 timelib==0.2.4
-watchdog==0.10.2
 peewee==3.13.3
-validators==0.15.0
-PySimpleGUI==4.20.0
+validators==0.16.0
+PySimpleGUI==4.26.0
 pytz==2020.1
+websockets
+scrapy
+pywinpty
+pyscreenshot
+pyautogui
+pyscreeze
+pynput
+keyboard
+Pillow
+mss
+
 
 # GitPython
 GitPython==2.1.10
