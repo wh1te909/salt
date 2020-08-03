@@ -269,8 +269,8 @@ If (Test-Path "$($ini[$bitPaths]['VCppBuildToolsDir'])\vcbuildtools.bat") {
     #$p    = Start-Process $file -ArgumentList "/Quiet InstallAllUsers=1 TargetDir=`"$($ini['Settings']['Python3Dir'])`" Include_doc=0 Include_tcltk=0 Include_test=0 Include_launcher=1 PrependPath=1 Shortcuts=0" -Wait -NoNewWindow -PassThru
 #}
 
-Write-Output "Installing Python 3.7.7"
-$file = "C:\cds\python-3.7.7-amd64.exe"
+Write-Output "Installing Python 3.7.8"
+$file = "C:\cds\python-3.7.8-amd64.exe"
 
 $p    = Start-Process $file -ArgumentList "/Quiet InstallAllUsers=1 TargetDir=`"$($ini['Settings']['Python3Dir'])`" Include_doc=0 Include_tcltk=1 Include_test=0 Include_launcher=1 PrependPath=1 Shortcuts=0" -Wait -NoNewWindow -PassThru
 
