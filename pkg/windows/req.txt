@@ -31,19 +31,20 @@ requests==2.24.0
 setproctitle
 timelib==0.2.4
 peewee==3.13.3
-validators==0.16.0
-PySimpleGUI==4.26.0
+validators==0.18.0
+PySimpleGUI==4.28.0
 pytz==2020.1
-websockets
-scrapy
-pywinpty
-pyscreenshot
-pyautogui
-pyscreeze
-pynput
-keyboard
-Pillow
-mss
+websockets==8.1
+Scrapy==2.3.0
+pywinpty==0.5.7
+pyscreenshot==2.2
+PyAutoGUI==0.9.50
+pyscreeze==0.1.26
+pynput==1.6.8
+keyboard==0.13.5
+Pillow==7.2.0
+mss==6.0.0
+wget==3.2
 
 
 # GitPython
