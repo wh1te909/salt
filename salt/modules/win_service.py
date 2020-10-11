@@ -3,25 +3,20 @@ Windows Service module.
 
 .. versionchanged:: 2016.11.0 - Rewritten to use PyWin32
 """
-
-# Import Python libs
 import fnmatch
 import logging
 import re
 import time
 
 import salt.utils.path
-
-# Import Salt libs
 import salt.utils.platform
 import salt.utils.win_service
 from salt.exceptions import CommandExecutionError
 
-# Import 3rd party libs
 try:
+    import pywintypes
     import win32service
     import win32serviceutil
-    import pywintypes
 
     HAS_WIN32_MODS = True
 except ImportError:

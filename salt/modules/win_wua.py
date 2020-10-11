@@ -54,17 +54,14 @@ Group Policy using the ``lgpo`` module.
 
 :depends: salt.utils.win_update
 """
-# Import Python libs
 import logging
 
-# Import Salt libs
 import salt.utils.platform
 import salt.utils.win_service
 import salt.utils.win_update
 import salt.utils.winapi
 from salt.exceptions import CommandExecutionError
 
-# Import 3rd-party libs
 try:
     import win32com.client
 
@@ -92,7 +89,7 @@ def __virtual__():
     if not salt.utils.win_update.HAS_PYWIN32:
         return False, "WUA: Missing Libraries required by salt.utils.win_update"
 
-    """ if salt.utils.win_service.info("wuauserv")["StartType"] == "Disabled":
+    if salt.utils.win_service.info("wuauserv")["StartType"] == "Disabled":
         return (
             False,
             "WUA: The Windows Update service (wuauserv) must not be disabled",
@@ -123,7 +120,7 @@ def __virtual__():
             False,
             "WUA: The Windows Module Installer service (TrustedInstaller) must "
             "not be disabled",
-        ) """
+        )
 
     return True
 

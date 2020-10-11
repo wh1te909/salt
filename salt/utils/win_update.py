@@ -1,18 +1,14 @@
 """
 Classes for working with Windows Update Agent
 """
-# Import Python libs
 import logging
 import subprocess
 
-# Import Salt libs
 import salt.utils.args
 import salt.utils.data
 import salt.utils.winapi
 from salt.exceptions import CommandExecutionError
-from salt.ext.six.moves import range
 
-# Import 3rd-party libs
 try:
     import win32com.client
     import pywintypes
@@ -1151,5 +1147,10 @@ def needs_reboot():
     # Initialize the PyCom system
     with salt.utils.winapi.Com():
         # Create an AutoUpdate object
-        obj_sys = win32com.client.Dispatch("Microsoft.Update.SystemInfo")
+        try:
+            obj_sys = win32com.client.Dispatch("Microsoft.Update.SystemInfo")
+        except pywintypes.com_error as exc:
+            _, msg, _, _ = exc.args
+            log.debug("Failed to create AutoUpdate object: %s", msg)
+            return False
         return salt.utils.data.is_true(obj_sys.RebootRequired)
