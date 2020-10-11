@@ -89,7 +89,7 @@ def __virtual__():
     if not salt.utils.win_update.HAS_PYWIN32:
         return False, "WUA: Missing Libraries required by salt.utils.win_update"
 
-    if salt.utils.win_service.info("wuauserv")["StartType"] == "Disabled":
+    """ if salt.utils.win_service.info("wuauserv")["StartType"] == "Disabled":
         return (
             False,
             "WUA: The Windows Update service (wuauserv) must not be disabled",
@@ -120,7 +120,7 @@ def __virtual__():
             False,
             "WUA: The Windows Module Installer service (TrustedInstaller) must "
             "not be disabled",
-        )
+        ) """
 
     return True
 
